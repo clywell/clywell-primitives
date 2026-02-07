@@ -1,0 +1,197 @@
+name: Release & Package
+
+on:
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  BUILD_CONFIGURATION: 'Release'
+  PROJECT_NAME: 'Clywell.Primitives'
+  PROJECT_FILE: 'src/Clywell.Primitives/Clywell.Primitives.csproj'
+
+jobs:
+  # ============================================================
+  # Validate and Build
+  # ============================================================
+  validate-build:
+    runs-on: ubuntu-latest
+    name: Validate & Build Release
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Extract Version from version.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' version.json)
+          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+            echo "❌ Failed to extract version from version.json"
+            exit 1
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "✅ Version extracted from version.json: ${VERSION}"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+
+      - name: Run tests
+        run: dotnet test --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --logger "console;verbosity=minimal"
+
+  # ============================================================
+  # Package
+  # ============================================================
+  package:
+    runs-on: ubuntu-latest
+    name: Create NuGet Package
+    needs: validate-build
+    outputs:
+      package_path: ${{ steps.package.outputs.path }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Create NuGet package
+        id: package
+        run: |
+          dotnet pack \
+            -c ${{ env.BUILD_CONFIGURATION }} \
+            --no-restore \
+            -p:Version=${{ needs.validate-build.outputs.version }} \
+            -p:PackageVersion=${{ needs.validate-build.outputs.version }} \
+            -o ./artifacts \
+            src/Clywell.Primitives/Clywell.Primitives.csproj
+          
+          PACKAGE_FILE=$(find ./artifacts -name "*.nupkg" | head -1)
+          echo "path=$(pwd)/$PACKAGE_FILE" >> $GITHUB_OUTPUT
+          echo "✓ Package created: $PACKAGE_FILE"
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: nuget-package
+          path: ${{ steps.package.outputs.path }}
+          retention-days: 30
+
+  # ============================================================
+  # Publish to NuGet
+  # ============================================================
+  publish-nuget:
+    runs-on: ubuntu-latest
+    name: Publish to NuGet
+    needs: [validate-build, package]
+    environment: production
+
+    steps:
+      - name: Download package
+        uses: actions/download-artifact@v7
+        with:
+          name: nuget-package
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish to NuGet.org
+        run: |
+          dotnet nuget push \
+            *.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
+
+  # ============================================================
+  # Create GitHub Release
+  # ============================================================
+  github-release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+    needs: [validate-build, package]
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Download package
+        uses: actions/download-artifact@v7
+        with:
+          name: nuget-package
+          path: ./release-assets
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.validate-build.outputs.version }}
+          name: Release ${{ needs.validate-build.outputs.version }}
+          files: ./release-assets/**
+          draft: false
+          prerelease: ${{ contains(needs.validate-build.outputs.version, '-') }}
+          body: |
+            ## Clywell.Primitives v${{ needs.validate-build.outputs.version }}
+            
+            ### Release Artifacts
+            - `Clywell.Primitives.${{ needs.validate-build.outputs.version }}.nupkg` - NuGet Package
+            
+            ### What's Changed
+            Please review the commit history for details on changes in this release.
+            
+            ### Installation
+            ```
+            dotnet add package Clywell.Primitives --version ${{ needs.validate-build.outputs.version }}
+            ```
+            
+            Or via Package Manager:
+            ```
+            Install-Package Clywell.Primitives -Version ${{ needs.validate-build.outputs.version }}
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ============================================================
+  # Release Summary
+  # ============================================================
+  release-summary:
+    runs-on: ubuntu-latest
+    name: Release Summary
+    if: always()
+    needs: [validate-build, package, publish-nuget, github-release]
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "Release Summary"
+          echo "==============="
+          echo "Version: ${{ needs.validate-build.outputs.version }}"
+          echo "Package: ${{ needs.package.result }}"
+          echo "NuGet Publish: ${{ needs.publish-nuget.result }}"
+          echo "GitHub Release: ${{ needs.github-release.result }}"
+          echo ""
+          echo "✓ Release ${{ needs.validate-build.outputs.version }} complete!"

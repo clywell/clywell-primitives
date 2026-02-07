@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- Package Identity -->
+        <PackageId>Clywell.Primitives</PackageId>
+        <Description>Generic Result pattern and functional primitives for .NET - zero dependencies, zero business logic.
+            Provides railway-oriented programming extensions, error types, and pattern matching support.</Description>
+        <PackageTags>clywell;result-pattern;functional-programming;railway-oriented;error-handling</PackageTags>
+
+        <!-- URLs -->
+        <PackageProjectUrl>https://github.com/clywell/clywell-primitives</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/clywell/clywell-primitives</RepositoryUrl>
+
+        <!-- Include README in package -->
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <!-- ZERO external dependencies - this is a standalone package -->
+
+    <!-- Versioning -->
+    <ItemGroup>
+        <PackageReference Include="Nerdbank.GitVersioning">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <!-- Source Link (enables step-into debugging for NuGet consumers) -->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
