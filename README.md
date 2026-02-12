@@ -506,6 +506,27 @@ Result<int> count = Result.FromNullable(
 
 ---
 
+## Samples
+
+### StudentScoreApi
+
+A sample ASP.NET Core Web API application demonstrates how to use `Clywell.Primitives` in a real-world scenario, implementing the Result pattern in services and controllers to handle success and failure flows gracefully.
+
+Location: [samples/StudentScoreApi](samples/StudentScoreApi)
+
+To run the sample:
+1. Navigate to `samples/StudentScoreApi`
+2. Run `dotnet run`
+3. Use the provided `demo_result.ps1` PowerShell script to test success and failure scenarios against the API.
+
+### SampleApp
+
+A simple console application demonstrating basic usage of `Result` types, chaining, and error handling.
+
+Location: [samples/SampleApp](samples/SampleApp)
+
+---
+
 ## Documentation
 
 - [Getting Started](docs/getting-started.md) — Full setup and usage guide
