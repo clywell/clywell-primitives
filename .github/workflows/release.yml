@@ -86,7 +86,7 @@ jobs:
             src/Clywell.Primitives/Clywell.Primitives.csproj
           
           PACKAGE_FILE=$(find ./artifacts -name "*.nupkg" | head -1)
-          echo "path=$(pwd)/$PACKAGE_FILE" >> $GITHUB_OUTPUT
+          echo "path=$(realpath "$PACKAGE_FILE")" >> $GITHUB_OUTPUT
           echo "✓ Package created: $PACKAGE_FILE"
 
       - name: Upload package artifact
