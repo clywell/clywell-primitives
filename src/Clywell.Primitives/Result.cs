@@ -64,9 +64,9 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <summary>
     /// Gets the error.
     /// </summary>
-    /// <exception cref="InvalidOperationException">Thrown when the result is a success.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result is a success or in an invalid default state.</exception>
     public Error Error => !_isSuccess
-        ? _error!
+        ? _error ?? throw new InvalidOperationException("Result is in an invalid default state. Use Result.Failure<T>(error) to create a failed result.")
         : throw new InvalidOperationException(
             "Cannot access Error on a successful Result.");
 

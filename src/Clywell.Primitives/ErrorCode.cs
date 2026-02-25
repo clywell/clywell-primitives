@@ -9,9 +9,21 @@ namespace Clywell.Primitives;
 /// ErrorCode is implemented as a readonly record struct for value semantics,
 /// zero-allocation comparisons, and immutability.
 /// </remarks>
-/// <param name="Value">The string value of the error code.</param>
-public readonly record struct ErrorCode(string Value)
+public readonly record struct ErrorCode
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorCode"/> struct.
+    /// </summary>
+    /// <param name="value">The string value of the error code.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="value"/> is null or empty.</exception>
+    public ErrorCode(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        Value = value;
+    }
+
+    /// <summary>Gets the string value of the error code.</summary>
+    public string Value { get; }
     // ============================================================
     // Built-in Error Codes
     // ============================================================

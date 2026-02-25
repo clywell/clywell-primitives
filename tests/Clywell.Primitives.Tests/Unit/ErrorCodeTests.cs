@@ -70,4 +70,22 @@ public class ErrorCodeTests
         var code2 = new ErrorCode("Hash.Test");
         Assert.Equal(code1.GetHashCode(), code2.GetHashCode());
     }
+
+    [Fact]
+    public void Constructor_NullValue_ShouldThrow()
+    {
+        Assert.ThrowsAny<ArgumentException>(() => new ErrorCode(null!));
+    }
+
+    [Fact]
+    public void Constructor_EmptyValue_ShouldThrow()
+    {
+        Assert.Throws<ArgumentException>(() => new ErrorCode(""));
+    }
+
+    [Fact]
+    public void Constructor_WhitespaceValue_ShouldThrow()
+    {
+        Assert.Throws<ArgumentException>(() => new ErrorCode("   "));
+    }
 }

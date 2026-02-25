@@ -22,7 +22,7 @@ Generic Result pattern and functional primitives for .NET. Provides railway-orie
 - **Zero Dependencies** — 100% standalone, no external NuGet packages
 - **.NET 10.0+ / C# 14** — Modern language features including extension members
 - **Source Link Enabled** — Step into source code when debugging NuGet package
-- **190+ Unit Tests** — Comprehensive coverage across all types and operations
+- **211+ Unit Tests** — Comprehensive coverage across all types and operations
 
 ---
 
@@ -503,13 +503,6 @@ Result<int> count = Result.FromNullable(
     GetOptionalCount(),  // int?
     "Count unavailable");
 ```
-
----
-
-## Documentation
-
-- [Getting Started](docs/getting-started.md) — Full setup and usage guide
-- [Quick Reference](QUICK_REFERENCE.md) — Cheat sheet for common operations
 
 ---
 

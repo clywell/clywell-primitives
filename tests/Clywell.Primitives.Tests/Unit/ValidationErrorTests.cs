@@ -195,4 +195,21 @@ public class ValidationErrorTests
 
         Assert.Equal(2, error.FailureCount);
     }
+
+    // ============================================================
+    // Empty Failures Guard Tests
+    // ============================================================
+
+    [Fact]
+    public void Constructor_EmptyParamsArray_ShouldThrow()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ValidationError());
+    }
+
+    [Fact]
+    public void Constructor_EmptyEnumerable_ShouldThrow()
+    {
+        Assert.Throws<ArgumentException>(
+            () => new ValidationError(Enumerable.Empty<ValidationFailure>()));
+    }
 }

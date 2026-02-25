@@ -52,9 +52,9 @@ public readonly struct Result : IEquatable<Result>
     /// <summary>
     /// Gets the error.
     /// </summary>
-    /// <exception cref="InvalidOperationException">Thrown when the result is a success.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result is a success or in an invalid default state.</exception>
     public Error Error => !_isSuccess
-        ? _error!
+        ? _error ?? throw new InvalidOperationException("Result is in an invalid default state. Use Result.Failure(error) to create a failed result.")
         : throw new InvalidOperationException(
             "Cannot access Error on a successful Result.");
 
@@ -73,7 +73,8 @@ public readonly struct Result : IEquatable<Result>
     /// </summary>
     /// <param name="error">The error.</param>
     /// <returns>A failed <see cref="Result"/>.</returns>
-    public static Result Failure(Error error) => new(false, error);
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="error"/> is null.</exception>
+    public static Result Failure(Error error) => new(false, error ?? throw new ArgumentNullException(nameof(error)));
 
     /// <summary>
     /// Creates a failed result with a general failure error.
@@ -320,8 +321,7 @@ public readonly struct Result : IEquatable<Result>
         }
         catch (Exception ex)
         {
-            return Failure(Error.Unexpected(ex.Message)
-                .WithMetadata("ExceptionType", ex.GetType().FullName ?? ex.GetType().Name));
+            return Failure(CreateErrorFromException(ex));
         }
     }
 
@@ -340,8 +340,7 @@ public readonly struct Result : IEquatable<Result>
         }
         catch (Exception ex)
         {
-            return Failure<T>(Error.Unexpected(ex.Message)
-                .WithMetadata("ExceptionType", ex.GetType().FullName ?? ex.GetType().Name));
+            return Failure<T>(CreateErrorFromException(ex));
         }
     }
 
@@ -360,8 +359,7 @@ public readonly struct Result : IEquatable<Result>
         }
         catch (Exception ex)
         {
-            return Failure(Error.Unexpected(ex.Message)
-                .WithMetadata("ExceptionType", ex.GetType().FullName ?? ex.GetType().Name));
+            return Failure(CreateErrorFromException(ex));
         }
     }
 
@@ -380,8 +378,7 @@ public readonly struct Result : IEquatable<Result>
         }
         catch (Exception ex)
         {
-            return Failure<T>(Error.Unexpected(ex.Message)
-                .WithMetadata("ExceptionType", ex.GetType().FullName ?? ex.GetType().Name));
+            return Failure<T>(CreateErrorFromException(ex));
         }
     }
 
@@ -597,4 +594,13 @@ public readonly struct Result : IEquatable<Result>
     /// <inheritdoc />
     public override string ToString() =>
         _isSuccess ? "Success" : $"Failure({_error})";
+
+    // ============================================================
+    // Private Helpers
+    // ============================================================
+
+    private static Error CreateErrorFromException(Exception ex) =>
+        Error.Unexpected(ex.Message)
+            .WithMetadata("ExceptionType", ex.GetType().FullName ?? ex.GetType().Name)
+            .WithMetadata("StackTrace", ex.StackTrace ?? string.Empty);
 }

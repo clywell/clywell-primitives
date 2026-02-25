@@ -8,7 +8,6 @@ on:
       - 'feature/**'
     paths-ignore:
       - '**.md'
-      - 'docs/**'
       - 'LICENSE'
       - '.gitignore'
       - '.github/workflows/security.yml'
@@ -20,7 +19,6 @@ on:
       - develop
     paths-ignore:
       - '**.md'
-      - 'docs/**'
       - 'LICENSE'
       - '.gitignore'
       - '.github/workflows/security.yml'
@@ -114,25 +112,6 @@ jobs:
         continue-on-error: true
 
   # ============================================================
-  # Build Documentation
-  # ============================================================
-  documentation:
-    runs-on: ubuntu-latest
-    name: Documentation Check
-    if: github.actor != 'dependabot[bot]'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Check README files
-        run: |
-          echo "Checking documentation files..."
-          test -f README.md && echo "✓ Main README found" || echo "✗ Main README missing"
-          test -f CHANGELOG.md && echo "✓ CHANGELOG found" || echo "✗ CHANGELOG missing"
-          test -f docs/getting-started.md && echo "✓ Getting started found" || echo "✗ Getting started missing"
-
-  # ============================================================
   # Publish Results
   # ============================================================
   publish-test-results:
@@ -168,20 +147,19 @@ jobs:
     runs-on: ubuntu-latest
     name: CI/CD Summary
     if: always()
-    needs: [build, code-quality, documentation]
+    needs: [build, code-quality]
 
     steps:
       - name: Check job status
         run: |
           echo "CI/CD Pipeline Summary:"
           echo "=======================";
-          echo "Build: ${{ job.status }}"
+          echo "Build: ${{ needs.build.result }}"
           echo "Code Quality: ${{ needs.code-quality.result }}"
-          echo "Documentation: ${{ needs.documentation.result }}"
           echo "=======================";
           
-          if [ "${{ job.status }}" == "failure" ]; then
-            echo "⚠️  Some jobs failed. Please review the logs."
+          if [ "${{ needs.build.result }}" == "failure" ]; then
+            echo "⚠️  Build failed. Please review the logs."
             exit 1
           else
             echo "✓ All jobs passed!"

@@ -645,6 +645,50 @@ public class ResultTests
     }
 
     // ============================================================
+    // Default Struct Tests
+    // ============================================================
+
+    [Fact]
+    public void DefaultStruct_ShouldBeFailure()
+    {
+        var result = default(Result<int>);
+
+        Assert.True(result.IsFailure);
+        Assert.False(result.IsSuccess);
+    }
+
+    [Fact]
+    public void DefaultStruct_AccessingError_ShouldThrowInvalidOperationException()
+    {
+        var result = default(Result<int>);
+
+        var ex = Assert.Throws<InvalidOperationException>(() => result.Error);
+        Assert.Contains("invalid default state", ex.Message);
+    }
+
+    [Fact]
+    public void DefaultStruct_AccessingValue_ShouldThrowInvalidOperationException()
+    {
+        var result = default(Result<int>);
+
+        Assert.Throws<InvalidOperationException>(() => result.Value);
+    }
+
+    // ============================================================
+    // Try StackTrace Tests
+    // ============================================================
+
+    [Fact]
+    public void Try_ThrowingFunction_ShouldIncludeStackTrace()
+    {
+        var result = Result.Try<int>(() => throw new InvalidOperationException("boom"));
+
+        Assert.True(result.IsFailure);
+        Assert.True(result.Error.Metadata.ContainsKey("StackTrace"));
+        Assert.NotEqual(string.Empty, result.Error.Metadata["StackTrace"]);
+    }
+
+    // ============================================================
     // Helpers
     // ============================================================
 

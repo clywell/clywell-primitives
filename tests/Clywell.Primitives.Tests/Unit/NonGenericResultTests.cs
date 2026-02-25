@@ -549,4 +549,62 @@ public class NonGenericResultTests
         Assert.False(executed);
         Assert.True(result.IsSuccess);
     }
+
+    // ============================================================
+    // Default Struct Tests
+    // ============================================================
+
+    [Fact]
+    public void DefaultStruct_ShouldBeFailure()
+    {
+        var result = default(Result);
+
+        Assert.True(result.IsFailure);
+        Assert.False(result.IsSuccess);
+    }
+
+    [Fact]
+    public void DefaultStruct_AccessingError_ShouldThrowInvalidOperationException()
+    {
+        var result = default(Result);
+
+        var ex = Assert.Throws<InvalidOperationException>(() => result.Error);
+        Assert.Contains("invalid default state", ex.Message);
+    }
+
+    // ============================================================
+    // Null Validation Tests
+    // ============================================================
+
+    [Fact]
+    public void Failure_WithNullError_ShouldThrowArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => Result.Failure((Error)null!));
+    }
+
+    // ============================================================
+    // Try StackTrace Tests
+    // ============================================================
+
+    [Fact]
+    public void Try_ThrowingAction_ShouldIncludeStackTrace()
+    {
+        var result = Result.Try(() => throw new InvalidOperationException("boom"));
+
+        Assert.True(result.IsFailure);
+        Assert.True(result.Error.Metadata.ContainsKey("StackTrace"));
+        Assert.NotEqual(string.Empty, result.Error.Metadata["StackTrace"]);
+    }
+
+    [Fact]
+    public async Task TryAsync_ThrowingAction_ShouldIncludeStackTrace()
+    {
+        var result = await Result.TryAsync(async () =>
+        {
+            await Task.CompletedTask;
+            throw new InvalidOperationException("async boom");
+        });
+
+        Assert.True(result.Error.Metadata.ContainsKey("StackTrace"));
+    }
 }

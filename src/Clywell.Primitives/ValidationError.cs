@@ -23,9 +23,11 @@ public sealed record ValidationError : Error
     /// Initializes a new instance of the <see cref="ValidationError"/> class with multiple failures.
     /// </summary>
     /// <param name="failures">The collection of validation failures.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="failures"/> is empty.</exception>
     public ValidationError(params ValidationFailure[] failures)
         : base(ErrorCode.Validation, "One or more validation errors occurred.")
     {
+        ArgumentOutOfRangeException.ThrowIfZero(failures.Length, nameof(failures));
         Failures = [.. failures];
     }
 
@@ -34,10 +36,15 @@ public sealed record ValidationError : Error
     /// an enumerable of failures.
     /// </summary>
     /// <param name="failures">The collection of validation failures.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="failures"/> contains no elements.</exception>
     public ValidationError(IEnumerable<ValidationFailure> failures)
         : base(ErrorCode.Validation, "One or more validation errors occurred.")
     {
         Failures = [.. failures];
+        if (Failures.Length == 0)
+        {
+            throw new ArgumentException("At least one validation failure is required.", nameof(failures));
+        }
     }
 
     /// <summary>Gets the immutable list of validation failures.</summary>

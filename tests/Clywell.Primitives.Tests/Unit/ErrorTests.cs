@@ -240,4 +240,29 @@ public class ErrorTests
 
         Assert.NotEqual(error1, error2);
     }
+
+    // ============================================================
+    // Equality With Metadata Tests
+    // ============================================================
+
+    [Fact]
+    public void Equality_SameErrorDifferentMetadataInstances_ShouldNotBeEqual()
+    {
+        // Record equality uses reference equality for ImmutableDictionary,
+        // so two errors with independently-built metadata won't be equal.
+        var e1 = Error.Failure("test").WithMetadata("key", "value");
+        var e2 = Error.Failure("test").WithMetadata("key", "value");
+
+        Assert.NotEqual(e1, e2);
+    }
+
+    [Fact]
+    public void Equality_SameMetadataInstance_ShouldBeEqual()
+    {
+        var e1 = Error.Failure("test");
+        var e2 = Error.Failure("test");
+
+        // Without metadata, the default empty ImmutableDictionary is shared.
+        Assert.Equal(e1, e2);
+    }
 }
