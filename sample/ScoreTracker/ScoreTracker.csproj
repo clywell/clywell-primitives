@@ -4,18 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <!--
-      Opt this sample project out of the root Directory.Packages.props
-      (Central Package Management) so we don't conflict with the package's own setup.
-    -->
+   
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
   <ItemGroup>
-    <!--
-      Reference the Clywell.Primitives package source directly from the cloned repo.
-      We are only USING the package — we don't change a single line inside it.
-    -->
+   
     <ProjectReference Include="..\..\src\Clywell.Primitives\Clywell.Primitives.csproj" />
   </ItemGroup>
 
