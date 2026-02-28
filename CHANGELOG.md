@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-02-28
+
+### Added
+
+- `PagedResult<T>` — immutable paged result carrying `Items`, `TotalCount`, `Page`, `PageSize`, derived `TotalPages`, `HasPreviousPage`, `HasNextPage`, and a static `Empty()` factory
+- `PagingParameters` — value object encapsulating `Page` (1-based), `PageSize` (capped at 100), and a derived `Skip` helper; `Default` singleton for convenience
+- `SortingParameters` — value object encapsulating `SortBy` (field name) and `Direction` (`SortDirection` enum: `Ascending` / `Descending`); `IsDescending` convenience property
+- `SortDirection` — `Ascending` / `Descending` enum used by `SortingParameters`
+
+---
+
 ## [1.0.0] - 2026-02-25
 
 ### Added

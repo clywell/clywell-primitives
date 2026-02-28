@@ -1,0 +1,32 @@
+namespace Clywell.Primitives;
+
+/// <summary>
+/// Encapsulates pagination parameters for a paged query.
+/// </summary>
+/// <param name="Page">The 1-based page number. Defaults to <c>1</c>.</param>
+/// <param name="PageSize">
+/// The number of items per page. Defaults to <see cref="DefaultPageSize"/>.
+/// Clamped to a maximum of <see cref="MaxPageSize"/>.
+/// </param>
+/// <remarks>
+/// Pass a <see cref="PagingParameters"/> instance to repository or query methods
+/// that support pagination. Combine with <see cref="SortingParameters"/> for
+/// sorted, paged results.
+/// </remarks>
+public sealed record PagingParameters(int Page = 1, int PageSize = PagingParameters.DefaultPageSize)
+{
+    /// <summary>The maximum allowed page size.</summary>
+    public const int MaxPageSize = 100;
+
+    /// <summary>The default page size when none is specified.</summary>
+    public const int DefaultPageSize = 20;
+
+    /// <summary>Gets the number of items per page (capped at <see cref="MaxPageSize"/>).</summary>
+    public int PageSize { get; } = Math.Min(PageSize, MaxPageSize);
+
+    /// <summary>Gets the number of items to skip to reach this page.</summary>
+    public int Skip => (Page - 1) * PageSize;
+
+    /// <summary>Returns default paging parameters (page 1, default page size).</summary>
+    public static PagingParameters Default => new();
+}
