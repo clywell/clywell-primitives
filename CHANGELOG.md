@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.2] - 2026-03-14
+
+### Changed
+
+- `PagingParameters` — removed `IValidatableObject`; `[Range]` attributes are sufficient for .NET 10 built-in parameter validation
+- `PagingParameters.Default` static property removed to prevent recursive validation traversal (`Default.Default...`)
+
+---
+
 ## [1.1.1] - 2026-03-14
 
 ### Changed
@@ -51,5 +60,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.1.2]: https://github.com/clywell/clywell-primitives/releases/tag/v1.1.2
 [1.1.1]: https://github.com/clywell/clywell-primitives/releases/tag/v1.1.1
 [1.0.0]: https://github.com/clywell/clywell-primitives/releases/tag/v1.0.0
