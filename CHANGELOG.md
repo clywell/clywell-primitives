@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.1] - 2026-03-14
+
+### Changed
+
+- `PagingParameters` — added `System.ComponentModel.DataAnnotations` validation support:
+	- `[Range(1, int.MaxValue)]` on `Page` property
+	- `[Range(1, MaxPageSize)]` on `PageSize` property
+	- Implements `IValidatableObject` for use with ASP.NET Core minimal API `.WithParameterValidation()`
+	- Constructor overloads added to support parameterless and `(int page, int pageSize)` construction
+
+---
+
 ## [1.1.0] - 2026-02-28
 
 ### Added
@@ -39,4 +51,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.1.1]: https://github.com/clywell/clywell-primitives/releases/tag/v1.1.1
 [1.0.0]: https://github.com/clywell/clywell-primitives/releases/tag/v1.0.0
