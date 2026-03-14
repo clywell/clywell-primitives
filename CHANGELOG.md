@@ -7,12 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.3] - 2026-03-14
+
+### Changed
+
+- `PagingParameters` — restored DataAnnotations validation attributes. Carries `[Range(1, int.MaxValue)]` on `Page` and `[Range(1, MaxPageSize)]` on `PageSize`, enabling direct use with `[AsParameters]` in minimal API endpoints and ASP.NET Core's built-in `AddValidation()`. No separate request model needed.
+
+---
+
 ## [1.1.2] - 2026-03-14
 
 ### Changed
 
-- `PagingParameters` — removed `IValidatableObject`; `[Range]` attributes are sufficient for .NET 10 built-in parameter validation
-- `PagingParameters.Default` static property removed to prevent recursive validation traversal (`Default.Default...`)
+- `PagingParameters` — reverted DataAnnotations support; validation attributes are an API/HTTP concern and belong in the API binding layer, not in the domain model. Use `PagingRequest` from `Clywell.ServiceDefaults` for endpoint parameter binding with built-in validation.
 
 ---
 
@@ -60,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.1.3]: https://github.com/clywell/clywell-primitives/releases/tag/v1.1.3
 [1.1.2]: https://github.com/clywell/clywell-primitives/releases/tag/v1.1.2
 [1.1.1]: https://github.com/clywell/clywell-primitives/releases/tag/v1.1.1
 [1.0.0]: https://github.com/clywell/clywell-primitives/releases/tag/v1.0.0
