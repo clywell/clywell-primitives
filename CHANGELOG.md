@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2026-03-23
+
+### Added
+
+- `IDomainEvent` — marker interface for in-process domain events raised by domain entities. Used by `Entity<TId>` in `Clywell.Core.Data` and dispatched by `IDomainEventDispatcher` in `Clywell.Core.Messaging`.
+- `IIntegrationEvent` — marker interface for cross-service integration events published via the transactional outbox pattern. Implementations must be JSON-serialisable.
+
+---
+
 ## [1.1.3] - 2026-03-14
 
 ### Changed
