@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] - 2026-06-02
+
+### Changed
+
+- Bumped `Microsoft.NET.Test.Sdk` from 18.3.0 to 18.6.0 (test-only)
+- Bumped `coverlet.collector` from 8.0.1 to 10.0.1 (test-only)
+- Bumped `Microsoft.SourceLink.GitHub` from 10.0.201 to 10.0.300
+
+---
+
 ## [1.2.0] - 2026-03-23
 
 ### Added
@@ -37,10 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `PagingParameters` — added `System.ComponentModel.DataAnnotations` validation support:
-	- `[Range(1, int.MaxValue)]` on `Page` property
-	- `[Range(1, MaxPageSize)]` on `PageSize` property
-	- Implements `IValidatableObject` for use with ASP.NET Core minimal API `.WithParameterValidation()`
-	- Constructor overloads added to support parameterless and `(int page, int pageSize)` construction
+  - `[Range(1, int.MaxValue)]` on `Page` property
+  - `[Range(1, MaxPageSize)]` on `PageSize` property
+  - Implements `IValidatableObject` for use with ASP.NET Core minimal API `.WithParameterValidation()`
+  - Constructor overloads added to support parameterless and `(int page, int pageSize)` construction
 
 ---
 
@@ -76,7 +86,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/clywell/clywell-primitives/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/clywell/clywell-primitives/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/clywell/clywell-primitives/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/clywell/clywell-primitives/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/clywell/clywell-primitives/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/clywell/clywell-primitives/compare/v1.1.1...v1.1.2
